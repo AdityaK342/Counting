@@ -2,22 +2,26 @@ import cv2
 import mediapipe as mp
 
 
-mp_hands = mp.solutions.hands
-mp_drawing = mp.solutions.drawing_utils
+mp_hands = mp.solutions.hands #used for counting fingers 
+mp_drawing = mp.solutions.drawing_utils #used for drawing hands landmarks
 
 
-hands = mp_hands.Hands()
+hands = mp_hands.Hands() #intialize the hand tracking model
+
+#Helper function
+#pram --> hand_landmarks: the landmarks of the detected hand
+#returns --> the number of fingers that are up
 
 def count_fingers(hand_landmarks):
     lm = hand_landmarks.landmark
 
     fingers = 0
 
-    # Index, Middle, Ring, Pinky
-    tips = [8, 12, 16, 20]
+    # Index, Middle, Ring, Pinky --> looking at the tip and the joint below it
+    tips = [8, 12, 16, 20] 
 
     for tip in tips:
-        if lm[tip].y < lm[tip - 2].y:
+        if lm[tip].y < lm[tip - 2].y: # if the tip is above the joint, it's considered up
             fingers += 1
 
     # Thumb (horizontal check)
